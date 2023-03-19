@@ -5,7 +5,7 @@ import { TextArea } from "./src/components/TextArea";
 import { Message } from "./src/components/Message";
 
 export default function Home() {
-  const [message, setMessage] = useState<ChatCompletionRequestMessage[]>([
+  const [messages, setMessage] = useState<ChatCompletionRequestMessage[]>([
     {
       role: "assistant",
       content: "Hi, coucou",
@@ -22,9 +22,12 @@ export default function Home() {
           Monsieur je sais tout ...
         </h1>
         <ul>
-          {message.map((message, u) => (
-            <Message message={message} key={message.content + 1} />
+          {messages.map((message, i) => (
+            <Message message={message} key={message.content + i} />
           ))}
+          {messages.length === 0 && (
+            <li>Pas de message, commencez une conversation</li>
+          )}
         </ul>
       </div>
       <form>
