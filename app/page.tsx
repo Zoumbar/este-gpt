@@ -1,23 +1,52 @@
 "use client";
 import { FormEvent, useRef, useState } from "react";
-import { ChatCompletionRequestMessage } from "openai";
+import {
+  ChatCompletionRequestMessage,
+  ChatCompletionResponseMessageRoleEnum,
+  Configuration,
+  OpenAIApi,
+} from "openai";
 import { TextArea } from "./src/components/TextArea";
 import { Message } from "./src/components/Message";
+import { useMutation } from "@tanstack/react-query";
+import { Loader } from "./src/components/Loader";
+
+const createChatCompletion = (messages: ChatCompletionRequestMessage[]) => {
+  const configuration = new Configuration({
+    apiKey: process.env.NEXT_PUBLIC_OPENAI_KEY,
+  });
+
+  const openai = new OpenAIApi(configuration);
+
+  return openai.createChatCompletion({
+    model: "gpt-3.5-turbo",
+    messages: messages,
+  });
+};
 
 export default function Home() {
-  const [messages, setMessages] = useState<ChatCompletionRequestMessage[]>([
-    {
-      role: "assistant",
-      content: "Hi, coucou",
-    },
-    {
-      role: "user",
-      content: "What's your name ?",
-    },
-  ]);
+  const [messages, setMessages] = useState<ChatCompletionRequestMessage[]>([]);
 
   const ref = useRef<HTMLUListElement>(null);
+  const mutation = useMutation(
+    (newMessages: ChatCompletionRequestMessage[]) =>
+      createChatCompletion(newMessages),
+    {
+      onSuccess: (response) => {
+        const newText = response.data.choices[0].message?.content;
 
+        if (!newText) {
+          return;
+        }
+
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          { role: "assistant", content: newText },
+        ]);
+        scrollToLastMessage();
+      },
+    }
+  );
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -34,8 +63,8 @@ export default function Home() {
     setMessages(newMessages);
 
     e.currentTarget.reset();
-
     scrollToLastMessage();
+    mutation.mutate(newMessages);
   };
 
   const scrollToLastMessage = () => {
@@ -57,10 +86,19 @@ export default function Home() {
           {messages.length === 0 && (
             <li>Pas de message, commencez une conversation</li>
           )}
+          {mutation.isLoading && (
+            <li className="flex items-center w-full p-4">
+              <Loader />
+              <p className="text-gray-300 animate-pulse">Je reflechis ...</p>
+            </li>
+          )}
         </ul>
       </div>
       <form onSubmit={handleSubmit}>
-        <fieldset className="flex items-end gap-2">
+        <fieldset
+          disabled={mutation.isLoading}
+          className="flex items-end gap-2"
+        >
           <div className="flex-1">
             <TextArea name="user" label="Ton message" />
           </div>
