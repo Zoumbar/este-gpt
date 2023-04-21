@@ -2,8 +2,8 @@ import "./globals.css";
 import { AppProviders } from "./providers";
 
 export const metadata = {
-  title: "ESTE GPT",
-  description: "Rencontrez mon Alfred perso, le serviteur de la nation.",
+  title: "ALFRED-GPT",
+  description: "Rencontrez mon Alfred, le serviteur de la nation.",
 };
 
 export default function RootLayout({

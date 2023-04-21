@@ -77,14 +77,14 @@ export default function Home() {
     <main className="m-auto max-w-xl flex flex-col px-2 py-8 h-full">
       <div className="flex-1 flex flex-col gap-4 overflow-auto">
         <h1 className="text-3xl md:text-5xl font-bold text-center">
-          Monsieur je sais tout ...
+          Je suis Alfred
         </h1>
         <ul ref={ref} className="flex flex-col flex-1">
           {messages.map((message, i) => (
             <Message message={message} key={message.content + i} />
           ))}
           {messages.length === 0 && (
-            <li>Pas de message, commencez une conversation</li>
+            <li className="text-center mt-4">De quelles informations avez-vous besoin ? </li>
           )}
           {mutation.isLoading && (
             <li className="flex items-center w-full p-4">
@@ -106,7 +106,7 @@ export default function Home() {
             type="submit"
             className="text-white mt-2 disabled:dark:bg-blue-800 disabled:dark:text-gray-400 disabled:text-gray-400 disabled:bg-blue-300 disabled:cursor-not-allowed bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5  dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
           >
-            SUBMIT
+            ENVOYER
           </button>
         </fieldset>
       </form>
